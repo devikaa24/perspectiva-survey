@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Create Survey - Perspectiva</title>
+  <style>
+    body{font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;background:#f8fafc;padding:20px}
+    .card{max-width:800px;margin:40px auto;background:#fff;padding:24px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+    .form-group{margin-bottom:12px}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input,textarea,select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px}
+    button{background:#3b82f6;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Create Survey</h2>
+    <div id="error" style="color:#dc2626;display:none;margin-bottom:8px"></div>
+    <form id="create-form">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input id="title" name="title" required />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category">
+          <option value="Education">Education</option>
+          <option value="Technology">Technology</option>
+          <option value="Environment">Environment</option>
+          <option value="Health">Health</option>
+          <option value="Business">Business</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="estimatedTime">Estimated time (minutes)</label>
+        <input id="estimatedTime" name="estimatedTime" type="number" value="5" />
+      </div>
+
+      <div class="form-group">
+        <label>Questions (JSON format)</label>
+        <textarea id="questions" rows="8">[{"question":"Sample question?","type":"text","options":[],"required":true}]</textarea>
+      </div>
+
+      <button type="submit">Create Survey</button>
+    </form>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    const form = document.getElementById('create-form');
+    const errorDiv = document.getElementById('error');
+
+    function getToken(){return localStorage.getItem('token')}
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      errorDiv.style.display='none';
+
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const category = document.getElementById('category').value;
+      const estimatedTime = parseInt(document.getElementById('estimatedTime').value,10) || 5;
+      let questions;
+
+      try {
+        questions = JSON.parse(document.getElementById('questions').value);
+      } catch (err) {
+        errorDiv.textContent = 'Questions must be valid JSON';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (!title || !description) {
+        errorDiv.textContent = 'Please provide title and description';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/surveys`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ title, description, category, estimatedTime, questions })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Failed');
+
+        alert('Survey created successfully');
+        window.location.href = '/dashboard';
+      } catch (err) {
+        console.error('Create survey error', err);
+        errorDiv.textContent = err.message || 'Request failed';
+        errorDiv.style.display='block';
+      }
+    });
+
+    // Redirect if not authenticated
+    if (!getToken()) {
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>

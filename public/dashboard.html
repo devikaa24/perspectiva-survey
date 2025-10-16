@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Perspectiva</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav a {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav a.active {
+            color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .nav a:hover {
+            color: #374151;
+            background: #f3f4f6;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .points-badge {
+            background: #eff6ff;
+            color: #3b82f6;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .welcome-section {
+            margin-bottom: 32px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .stat-info .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            opacity: 0.8;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .create-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .create-btn:hover {
+            background: #2563eb;
+        }
+
+        /* Surveys Grid */
+        .surveys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .survey-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .survey-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .survey-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f3f4f6;
+        }
+
+        .survey-content {
+            padding: 20px;
+        }
+
+        .survey-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .survey-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .survey-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #f59e0b;
+            font-size: 14px;
+        }
+
+        .survey-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .survey-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .survey-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .survey-points {
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
+        .survey-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .survey-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .start-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .start-btn:hover {
+            background: #2563eb;
+        }
+
+        .completed-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            background: #374151;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            position: absolute;
+            top: 12px;
+            left: 12px;
+        }
+
+        .survey-image-container {
+            position: relative;
+        }
+
+        /* Loading and Empty States */
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 64px 20px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 16px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: auto;
+            }
+
+            .surveys-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                📊 Perspectiva
+            </div>
+            <nav class="nav">
+                <a href="/dashboard" class="active">Dashboard</a>
+                <a href="/profile">Profile</a>
+            </nav>
+            <div class="user-menu">
+                <div class="points-badge" id="user-points">0 points</div>
+                <div class="user-avatar" id="user-avatar">U</div>
+                <button class="logout-btn" id="logout-btn">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1 class="welcome-title" id="welcome-title">Welcome back!</h1>
+            <p class="welcome-subtitle">Discover new surveys and continue your learning journey.</p>
+        </section>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message"></div>
+
+        <!-- Stats Cards -->
+        <section class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-info">
+                    <h3>Total Points</h3>
+                    <div class="value" id="total-points">0</div>
+                </div>
+                <div class="stat-icon">🏆</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-info">
+                    <h3>Completed</h3>
+                    <div class="value" id="completed-surveys">0</div>
+                </div>
+                <div class="stat-icon">✅</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-info">
+                    <h3>Rank</h3>
+                    <div class="value" id="user-rank">#-</div>
+                </div>
+                <div class="stat-icon">⭐</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-info">
+                    <h3>Streak</h3>
+                    <div class="value" id="user-streak">0</div>
+                </div>
+                <div class="stat-icon">🔥</div>
+            </div>
+        </section>
+
+        <!-- Filters -->
+        <section class="filters">
+            <input type="text" class="search-input" id="search-input" placeholder="Search surveys...">
+            <select class="filter-select" id="category-filter">
+                <option value="all">All Categories</option>
+                <option value="Education">Education</option>
+                <option value="Technology">Technology</option>
+                <option value="Environment">Environment</option>
+                <option value="Health">Health</option>
+                <option value="Business">Business</option>
+            </select>
+            <button class="create-btn" id="create-survey-btn">
+                ➕ Create Survey
+            </button>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Loading surveys...</p>
+        </div>
+
+        <!-- Surveys Grid -->
+        <section class="surveys-grid" id="surveys-grid">
+            <!-- Surveys will be loaded here -->
+        </section>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-icon">🔍</div>
+            <h3 class="empty-title">No surveys found</h3>
+            <p class="empty-description">Try adjusting your search terms or filters to find more surveys.</p>
+            <button class="create-btn" id="clear-filters-btn">Clear Filters</button>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        const API_BASE = '/api';
+        let surveys = [];
+        let filteredSurveys = [];
+        let userProfile = null;
+
+        // DOM Elements
+        const surveysGrid = document.getElementById('surveys-grid');
+        const loadingState = document.getElementById('loading-state');
+        const emptyState = document.getElementById('empty-state');
+        const errorMessage = document.getElementById('error-message');
+        const searchInput = document.getElementById('search-input');
+        const categoryFilter = document.getElementById('category-filter');
+        const logoutBtn = document.getElementById('logout-btn');
+        const createSurveyBtn = document.getElementById('create-survey-btn');
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
+
+        // Utility Functions
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        function getUser() {
+            const user = localStorage.getItem('user');
+            return user ? JSON.parse(user) : null;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        // API Functions
+        async function apiRequest(endpoint, options = {}) {
+            const token = getToken();
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                },
+                ...options
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, config);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Request failed');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API request failed:', error);
+                throw error;
+            }
+        }
+
+        // Authentication Check
+        function checkAuth() {
+            const token = getToken();
+            if (!token) {
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }
+
+        // Load User Profile
+        async function loadUserProfile() {
+            try {
+                const response = await apiRequest('/auth/profile');
+                userProfile = response.user;
+                updateUserDisplay();
+            } catch (error) {
+                console.error('Failed to load user profile:', error);
+                if (error.message.includes('token')) {
+                    logout();
+                }
+            }
+        }
+
+        // Update User Display
+        function updateUserDisplay() {
+            const user = getUser();
+            if (user && userProfile) {
+                // Update welcome message
+                document.getElementById('welcome-title').textContent = `Welcome back, ${user.firstName}!`;
+                
+                // Update user avatar
+                const avatar = document.getElementById('user-avatar');
+                avatar.textContent = `${user.firstName[0]}${user.lastName[0]}`;
+                
+                // Update stats
+                document.getElementById('user-points').textContent = `${userProfile.total_points || 0} points`;
+                document.getElementById('total-points').textContent = userProfile.total_points || 0;
+                document.getElementById('completed-surveys').textContent = userProfile.surveys_completed || 0;
+                document.getElementById('user-rank').textContent = userProfile.rank ? `#${userProfile.rank}` : '#-';
+                document.getElementById('user-streak').textContent = userProfile.current_streak || 0;
+            }
+        }
+
+        // Load Surveys
+        async function loadSurveys() {
+            try {
+                loadingState.style.display = 'block';
+                surveysGrid.style.display = 'none';
+                emptyState.style.display = 'none';
+
+                const response = await apiRequest('/surveys');
+                surveys = response.surveys || [];
+                filteredSurveys = [...surveys];
+                
+                renderSurveys();
+            } catch (error) {
+                console.error('Failed to load surveys:', error);
+                showError('Failed to load surveys. Please try again.');
+            } finally {
+                loadingState.style.display = 'none';
+            }
+        }
+
+        // Render Surveys
+        function renderSurveys() {
+            if (filteredSurveys.length === 0) {
+                surveysGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            surveysGrid.style.display = 'grid';
+
+            surveysGrid.innerHTML = filteredSurveys.map(survey => `
+                <div class="survey-card" onclick="viewSurvey(${survey.id})">
+                    <div class="survey-image-container">
+                        <img 
+                            src="${getDefaultThumbnail(survey.category)}" 
+                            alt="${survey.title}" 
+                            class="survey-image"
+                            onerror="this.style.display='none'"
+                        >
+                        <div class="category-badge">${survey.category}</div>
+                        ${survey.completed ? '<div style="position: absolute; top: 12px; right: 12px;"><span class="completed-badge">✅ Completed</span></div>' : ''}
+                    </div>
+                    <div class="survey-content">
+                        <div class="survey-header">
+                            <h3 class="survey-title">${survey.title}</h3>
+                            <div class="survey-rating">
+                                ⭐ ${(survey.average_rating || 0).toFixed(1)}
+                            </div>
+                        </div>
+                        <p class="survey-description">${survey.description}</p>
+                        <div class="survey-meta">
+                            <div class="survey-stats">
+                                <span>👥 ${survey.participants || 0}</span>
+                                <span>⏱️ ${survey.estimated_time || 5} min</span>
+                            </div>
+                            <div class="survey-points">🏆 50 pts</div>
+                        </div>
+                        <div class="survey-footer">
+                            <div class="survey-author">
+                                <div class="author-avatar">${getAuthorInitials(survey.first_name, survey.last_name)}</div>
+                                <span>${survey.first_name} ${survey.last_name}</span>
+                            </div>
+                            <button class="start-btn">
+                                ${survey.completed ? '📝 Review' : '▶️ Start'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Helper Functions
+        function getDefaultThumbnail(category) {
+            const thumbnails = {
+                'Education': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=80',
+                'Technology': 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&q=80',
+                'Environment': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80',
+                'Health': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80',
+                'Business': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80'
+            };
+            return thumbnails[category] || thumbnails['Education'];
+        }
+
+        function getAuthorInitials(firstName, lastName) {
+            return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
+        }
+
+        function viewSurvey(surveyId) {
+            window.location.href = `/survey/${surveyId}`;
+        }
+
+        // Filter Functions
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+
+            filteredSurveys = surveys.filter(survey => {
+                const matchesSearch = !searchTerm || 
+                    survey.title.toLowerCase().includes(searchTerm) ||
+                    survey.description.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = selectedCategory === 'all' || survey.category === selectedCategory;
+
+                return matchesSearch && matchesCategory;
+            });
+
+            renderSurveys();
+        }
+
+        function clearFilters() {
+            searchInput.value = '';
+            categoryFilter.value = 'all';
+            applyFilters();
+        }
+
+        // Event Listeners
+        logoutBtn.addEventListener('click', logout);
+        createSurveyBtn.addEventListener('click', () => {
+            window.location.href = '/create-survey';
+        });
+        clearFiltersBtn.addEventListener('click', clearFilters);
+
+        // Search and filter events
+        searchInput.addEventListener('input', applyFilters);
+        categoryFilter.addEventListener('change', applyFilters);
+
+        // Initialize Dashboard
+        async function initializeDashboard() {
+            if (!checkAuth()) return;
+
+            try {
+                await loadUserProfile();
+                await loadSurveys();
+            } catch (error) {
+                console.error('Dashboard initialization failed:', error);
+                showError('Failed to load dashboard. Please refresh the page.');
+            }
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>
