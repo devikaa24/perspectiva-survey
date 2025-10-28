@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-class AuthController {ww
+class AuthController {
   // Register new user
   static async register(req, res) {
     try {
